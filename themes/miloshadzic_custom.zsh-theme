@@ -26,9 +26,13 @@ DELIMETER="$FG[129]%} ► %{$reset_color%}"
 
 function theme_branch() {
   branch=$(git_current_branch)
+  shortened="${branch:0:20}"
+  if [ $shortened != $branch ]; then
+    shortened="${shortened}..."
+  fi
   n=$(echo $branch | md5sum | cut -c1-5)
   color=$(( (0x${n} % 131) + 100 ))
-	echo "%{$reset_color%}%{$FG[$color]%}$branch"	
+	echo "%{$reset_color%}%{$FG[$color]%}$shortened"
 }
 
 function theme_git_prompt() {
