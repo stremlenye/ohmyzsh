@@ -24,6 +24,9 @@ ZSH_THEME_AWS_VAULT_PROMPT_SET="%{$reset_color%}%{$FG[178]%}%{$BOLD%}"
 
 DELIMETER="$FG[129]%} ► %{$reset_color%}"
 
+GREEN="%{$reset_color%}%{$FG[034]%}%{$BOLD%}"
+RED="%{$reset_color%}%{$FG[196]%}%{$BOLD%}"
+
 function theme_branch() {
   branch=$(git_current_branch)
   if [ ! -z $branch ]; then
@@ -105,10 +108,27 @@ function theme_git_status_promp() {
   echo $STATUS | sed 's/ *$//g'
 }
 
+function vpn_status() {
+  IFS=$'\r\n' GLOBIGNORE='*' arr=($(ovpn-status))
+  unset IFS
+  unset GLOBIGNORE
+  STATUS=""
+  for var in "${arr[@]}"
+  do
+    read -r -A i <<< $var
+    if [ "${i[2]}" = "Connected" ]; then
+      STATUS="$GREEN${i[1]} $STATUS"
+    else
+      STATUS="$RED${i[1]} $STATUS"
+    fi
+  done
+  echo $STATUS | sed 's/ *$//g'
+}
+
 FIRST_PARTITION='%1~'
 
 function firstPartition() {
   echo "${XTITLE:-$FIRST_PARTITION}"
 }
 
-PROMPT='%{$fg[cyan]%}$(firstPartition)%{$reset_color%}$(theme_branch)$(git_commits_behind)$(git_commits_ahead)$(theme_git_prompt)$(aws_vault_prompt)%{$FG[129]%}%{$BOLD%} ⇒%{$reset_color%} '
+PROMPT='%{$fg[cyan]%}$(firstPartition)%{$reset_color%}$(vpn_status)$(theme_branch)$(git_commits_behind)$(git_commits_ahead)$(theme_git_prompt)$(aws_vault_prompt)%{$FG[129]%}%{$BOLD%} ⇒%{$reset_color%} '
