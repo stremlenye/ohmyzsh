@@ -30,9 +30,9 @@ RED="%{$reset_color%}%{$FG[196]%}%{$BOLD%}"
 function theme_branch() {
   branch=$(git_current_branch)
   if [ ! -z $branch ]; then
-    shortened="${branch:0:20}"
-    if [ $shortened != $branch ]; then
-      shortened="${shortened}..."
+    shortened="${branch:0:20}..."
+    if [ ${#shortened} -gt ${#branch} ]; then
+      shortened="${branch}"
     fi
     n=$(echo $branch | md5sum | cut -c1-5)
     color=$(( (0x${n} % 131) + 100 ))
